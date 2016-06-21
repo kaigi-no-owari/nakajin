@@ -4,6 +4,7 @@
     "phantomjs": "^1.9.16"
   },
   "scripts": {
-    "capture": "casperjs capture.js"
+    "capture": "casperjs capture.js",
+    "check": "casperjs checkRoom.js"
   }
 }
