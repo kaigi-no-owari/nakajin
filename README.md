@@ -9,6 +9,7 @@ Yahoo!Japanを開いてキャプチャを `capture-yahoo.png` に保存
 $ npm run sample
 ````
 
+
 ## 会議室のスケジュール取得
 
 ログインして会議室のスケジュール情報を取得する
@@ -18,4 +19,16 @@ $ npm run sample
 ```` bash
 $ npm run check
 ````
+
+### リモートデバッガ
+
+PhantomJS Remote Debuggerで実行する
+
+``` bash
+$ npm run debug
+```
+
+http://localhost:9000 にアクセス
+
+「about:blank」をクリックし、コンソールに `__run();` を入力して実行
 
