@@ -5,6 +5,7 @@
   },
   "scripts": {
     "sample": "casperjs sample.js",
-    "check": "casperjs checkRoom.js"
+    "check": "casperjs checkRoom.js",
+    "debug": "casperjs checkRoom.js --remote-debugger-port=9000"
   }
 }

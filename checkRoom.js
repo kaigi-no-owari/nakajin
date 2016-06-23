@@ -1,3 +1,5 @@
+debugger;
+
 var casper = require('casper').create({});
 var config = require('./config');
 var url = config.url;
