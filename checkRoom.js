@@ -3,6 +3,7 @@ debugger;
 var casper = require('casper').create({});
 var config = require('./config');
 var url = config.url;
+var post_url = config.post_url;
 var check_title = config.check_title;
 var check_description = config.check_description;
 
@@ -26,6 +27,7 @@ casper.then(function(){
 });
 
 casper.then(function() {
+
   // ここは少し時間がかかりそう
   casper.wait(5000, function() {
     var schedules = [];
@@ -90,11 +92,24 @@ casper.then(function() {
         schedules.push(JSON.parse(JSON.stringify(schedule)));
       }
       // for debug 時間がかかるので1回でループを抜ける
-      // break;
+      //break;
     }
-    this.echo('ALL SCHEDULE: ' + JSON.stringify(schedules));
+
+    var post_data = JSON.stringify(schedules);
+    this.echo('ALL SCHEDULE: ' + post_data);
 
     // サーバにPOSTする
+    casper.thenOpen(post_url, {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8'
+      },
+      data: post_data
+    });
+
+    casper.then(function(response) {
+      this.echo(this.getPageContent());
+    });
 
   });
 
