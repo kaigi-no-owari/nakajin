@@ -3,6 +3,8 @@ debugger;
 var casper = require('casper').create({});
 var config = require('./config');
 var url = config.url;
+var check_title = config.check_title;
+var check_description = config.check_description;
 
 casper.userAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.10 Safari/537.36 OPR/39.0.2256.4 (Edition beta)');
 
@@ -53,9 +55,13 @@ casper.then(function() {
     // 会議室ごとにdivの子要素をnth-child(i)で取得したいので1からカウントアップしてループで取得する
     for(var i=1; i<=ids.length; i++) {
       schedule.room_id = ids[i - 1];
-      schedule.description = this.evaluate(function(room_num) {
-        return document.querySelector('#jsch-plantweekgrp > form > div.sch-gweek.sch-cal-group-week.jsch-cal-list.jco-print-template > div:nth-child(' + room_num + ') > div.sch-gcal-target-header.other > div > div > div > a').textContent;
-      }, i);
+      // descriptionには会議室名をセットする
+      // configで指定した場合だけセット
+      if (check_title) {
+        schedule.description = this.evaluate(function(room_num) {
+          return document.querySelector('#jsch-plantweekgrp > form > div.sch-gweek.sch-cal-group-week.jsch-cal-list.jco-print-template > div:nth-child(' + room_num + ') > div.sch-gcal-target-header.other > div > div > div > a').textContent;
+        }, i);
+      }
 
       // その部屋の今日の全会議スケジュールを取得
       var meetings = this.evaluate(function(room_num) {
@@ -64,9 +70,13 @@ casper.then(function() {
       // スケジュールを順番に取得する
       // 会議室と同じでdivの子要素をnth-child(j)で取得したいので1からカウントアップ
       for(var j=1; j<=meetings.length; j++){
-        schedule.title = this.evaluate(function(room_num, meeting_num) {
-          return document.querySelector('#jsch-plantweekgrp > form > div.sch-gweek.sch-cal-group-week.jsch-cal-list.jco-print-template > div:nth-child(' + room_num + ') > div.cal-h-week > table > tbody > tr > td.cal-day.co-today > div > div:nth-child(' + meeting_num +') > a').textContent;
-        }, i, j);
+
+        // 会議のtitleはconfigで指定した場合だけセット
+        if (check_description){
+          schedule.title = this.evaluate(function(room_num, meeting_num) {
+            return document.querySelector('#jsch-plantweekgrp > form > div.sch-gweek.sch-cal-group-week.jsch-cal-list.jco-print-template > div:nth-child(' + room_num + ') > div.cal-h-week > table > tbody > tr > td.cal-day.co-today > div > div:nth-child(' + meeting_num +') > a').textContent;
+          }, i, j);
+        }
 
         // 時間は「11:00 - 12:00」の形式なので "-" でsplit
         var start_end = this.evaluate(function(room_num, meeting_num) {
