@@ -20,7 +20,7 @@ casper.start(url, function() {
 casper.then(function(){
   casper.wait(3000);
   // this.capture('capture-desknets1.png');
-  casper.thenOpen(url + 'cmd=plantweekgrp&log=on');
+  casper.thenOpen(url + '?cmd=plantweekgrp&log=on');
 });
 
 casper.then(function() {
