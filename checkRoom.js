@@ -6,6 +6,7 @@ var url = config.url;
 var post_url = config.post_url;
 var check_title = config.check_title;
 var check_description = config.check_description;
+var check_room_ids = config.room_ids;
 
 casper.userAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.10 Safari/537.36 OPR/39.0.2256.4 (Edition beta)');
 
@@ -52,11 +53,18 @@ casper.then(function() {
       });
     });
     this.echo('ROOM IDs: ' + ids);
+    if ( check_room_ids ) this.echo('CHECK ROOM IDs: ' + check_room_ids);
 
     // 会議室ごとにスケジュールを取得
     // 会議室ごとにdivの子要素をnth-child(i)で取得したいので1からカウントアップしてループで取得する
-    for(var i=1; i<=ids.length; i++) {
+    for (var i=1; i<=ids.length; i++) {
       schedule.room_id = ids[i - 1];
+      // config.room_idsを設定している場合は設定したroom_idの時だけ処理する
+      if (check_room_ids && check_room_ids.indexOf(parseInt(schedule.room_id, 10)) < 0 ) {
+        this.echo('SKIPPED :' + schedule.room_id);
+        continue;
+      }
+
       // descriptionには会議室名をセットする
       // configで指定した場合だけセット
       if (check_title) {
@@ -90,7 +98,7 @@ casper.then(function() {
 
         schedule.start_at = new Date(meeting_date + ' ' + start_end[0].trim());
         schedule.end_at = new Date(meeting_date + ' ' + start_end[1].trim());
-        
+
         // 日付に変換出来ない場合は無視（日単位で期間予約するとこのケースになる）
         if (schedule.start_at.toString() === "Invalid Date" || 
           schedule.end_at === "Invalid Date" ) break;
