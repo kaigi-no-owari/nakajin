@@ -85,8 +85,15 @@ casper.then(function() {
           return document.querySelector('#jsch-plantweekgrp > form > div.sch-gweek.sch-cal-group-week.jsch-cal-list.jco-print-template > div:nth-child(' + room_num + ') > div.cal-h-week > table > tbody > tr > td.cal-day.co-today > div > div:nth-child(' + meeting_num +') > a > span').textContent.split('-');
         }, i, j);
 
+        // 時刻が設定されていない会議は無視する（終日予約した場合はこのケース）
+        if (!start_end || !start_end[0] || !start_end[1]) break;
+
         schedule.start_at = new Date(meeting_date + ' ' + start_end[0].trim());
         schedule.end_at = new Date(meeting_date + ' ' + start_end[1].trim());
+        
+        // 日付に変換出来ない場合は無視（日単位で期間予約するとこのケースになる）
+        if (schedule.start_at.toString() === "Invalid Date" || 
+          schedule.end_at === "Invalid Date" ) break;
 
         // 取得した会議情報などは次に使いまわしたいのでディープコピーして配列にセット
         schedules.push(JSON.parse(JSON.stringify(schedule)));
