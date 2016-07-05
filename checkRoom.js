@@ -116,6 +116,7 @@ casper.then(function() {
     // サーバにPOSTする
     casper.thenOpen(post_url, {
       method: 'post',
+      encoding: 'utf-8',
       headers: {
         'Content-Type': 'application/json; charset=utf-8'
       },
